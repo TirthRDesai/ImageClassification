@@ -3,7 +3,7 @@ from flask_cors import CORS
 from model import MyModel
 import os
 import asyncio
-
+from waitress import serve
 
 app = Flask(__name__)
 CORS(app)
@@ -39,5 +39,5 @@ async def predict():
 
 
 if __name__ == '__main__':
-    os.system("cls")
-    app.run(debug=True, port=8080)
+    # os.system("cls")
+    serve(app, listen="*:8000")
