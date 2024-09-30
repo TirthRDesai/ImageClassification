@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>AI Model Frontend</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 50px;
+			}
+			.container {
+				max-width: 600px;
+				margin: 0 auto;
+				text-align: center;
+			}
+			input[type="file"] {
+				display: block;
+				margin: 20px auto;
+			}
+			button {
+				padding: 10px 20px;
+				background-color: #4caf50;
+				color: white;
+				border: none;
+				cursor: pointer;
+			}
+			button:hover {
+				background-color: #45a049;
+			}
+			#result {
+				margin-top: 20px;
+				font-size: 1.2em;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>AI Model Prediction</h1>
+			<p>Upload an image to get a prediction from the AI model.</p>
+
+			<input
+				type="file"
+				id="imageInput"
+				accept="image/*"
+			/>
+			<button onclick="sendImage()">Submit</button>
+
+			<div id="result"></div>
+		</div>
+
+		<script>
+			async function sendImage() {
+				const input = document.getElementById("imageInput");
+				const file = input.files[0];
+
+				if (!file) {
+					alert("Please select an image first.");
+					return;
+				}
+
+				const formData = new FormData();
+				formData.append("file", file);
+
+				try {
+					const response = await fetch(
+						"http://127.0.0.1:8080/predict/",
+						{
+							method: "POST",
+							body: formData,
+						}
+					);
+
+					const result = await response.json();
+
+					if (response.ok) {
+						document.getElementById("result").innerText =
+							"Prediction: " + result.predicted_class;
+					} else {
+						document.getElementById("result").innerText =
+							"Error: " + result.error;
+					}
+				} catch (error) {
+					console.error("Error:", error);
+					document.getElementById("result").innerText =
+						"Error: Unable to connect to server";
+				}
+			}
+		</script>
+	</body>
+</html>
